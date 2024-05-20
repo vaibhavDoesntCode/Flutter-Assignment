@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 
 class InputBMI extends StatefulWidget {
@@ -49,16 +51,33 @@ class _InputBMIState extends State<InputBMI> {
     if (weightNumber == null) {
       setState(() {
         _errorMessage = 'Please enter a valid weight';
-        
       });
       return;
     }
 
+    num realHeight;
+    if (selectedHeight.first == 'm') {
+      realHeight = 100.0 * heightNumber;
+    } else if (selectedHeight.first == 'inches') {
+      realHeight = 2.54 * heightNumber;
+    } else {
+      realHeight = heightNumber;
+    }
+    num realWeight;
+    if (selectedWeight.first == 'lbs') {
+      realWeight = 0.453592 * weightNumber;
+    } else {
+      realWeight = weightNumber;
+    }
+
     setState(() {
-      BMI =
-          (100 * 100 * weightNumber / (heightNumber * heightNumber)).toStringAsFixed(2);
+      BMI = (100 * 100 * realWeight / (realHeight * realHeight))
+          .toStringAsFixed(2);
     });
   }
+
+  Set<String> selectedHeight = {'cm'};
+  Set<String> selectedWeight = {'kgs'};
 
   @override
   Widget build(BuildContext context) {
@@ -77,24 +96,57 @@ class _InputBMIState extends State<InputBMI> {
                 controller: heightController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  hintText: 'in cm',
+                  hintText: 'in ${selectedHeight.first}',
                   labelText: 'Enter height',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
               ),
+              const SizedBox(height: 10),
+              SegmentedButton(
+                segments: const [
+                  ButtonSegment(value: 'cm', label: Text('cm')),
+                  ButtonSegment(
+                    value: 'm',
+                    label: Text('meters'),
+                  ),
+                  ButtonSegment(value: 'inches', label: Text('Inches'))
+                ],
+                selected: selectedHeight,
+                onSelectionChanged: (Set<String> newSelectedHeight) {
+                  setState(() {
+                    selectedHeight = newSelectedHeight;
+                  });
+                },
+              ),
               const SizedBox(height: 20),
               TextField(
                 controller: weightController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  hintText: 'in kgs',
+                  hintText: 'in  + ${selectedWeight.first}',
                   labelText: 'Enter weight',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
+              ),
+              const SizedBox(height: 10),
+              SegmentedButton(
+                segments: const [
+                  ButtonSegment(value: 'kgs', label: Text('kgs')),
+                  ButtonSegment(
+                    value: 'lbs',
+                    label: Text('Pounds'),
+                  ),
+                ],
+                selected: selectedWeight,
+                onSelectionChanged: (Set<String> newSelectedWeight) {
+                  setState(() {
+                    selectedWeight = newSelectedWeight;
+                  });
+                },
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -106,13 +158,16 @@ class _InputBMIState extends State<InputBMI> {
                 _errorMessage,
                 style: const TextStyle(color: Colors.red),
               ),
-              Text(
-                BMI,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                ),
-              )
+              Container(
+                width: double.infinity,
+                child: Text(
+                  BMI,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                    ),
+                  ),
+              ),
             ],
           ),
         ),
