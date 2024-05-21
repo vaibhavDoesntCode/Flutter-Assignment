@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:niceapp/calculator.dart';
+import 'package:niceapp/try.dart';
 import 'dart:math';
 import 'input_bmi.dart';
 
@@ -59,7 +61,18 @@ class _ColorChangerScreenState extends State<ColorChangerScreen> {
                             ),
                           );
                         },
-                        child: const Text('Navigate'))
+                        child: const Text('BMI')
+                        ),
+                        ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const Calculator(),
+                            ),
+                          );
+                        },
+                        child: const Text('Calculator'))
                   ],
                 ),
               )),
